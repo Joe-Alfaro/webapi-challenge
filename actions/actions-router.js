@@ -4,42 +4,62 @@ const actions = require('./actions-model.js');
 
 const router = express.Router();
 
-router.get('/', (request, respone) => {
-  actions
-    .get()
-    .then()
-    .catch()
-});
-router.post('/', (request, respone) => {
-  const newAction = request.body;
-  
-  actions
-    .insert(newAction)
-    .then()
-    .catch()
-});
-router.get('/:id', (request, respone) => {
+router.get('/:id', (request, response) => {
   const actionID = request.params.id;
 
   actions
     .get(request.params.id)
-    .then()
-    .catch()
+    .then(action => {
+      response
+        .status(200)
+        .json(action)
+    })
+    .catch(error => {
+      response
+        .status(500)
+        .json({
+          errorMessage: 'Error retrieving action'
+        })
+    })
 });
-router.put('/:id', (request, respone) => {
+router.put('/:id', (request, response) => {
   const actionID = request.params.id;
   const updatedInfo = request.body;
   
   actions
     .update(actionID, updatedInfo)
-    .then()
-    .catch()
+    .then(action => {
+      response
+        .status(201)
+        .json(action)
+    })
+    .catch(error => {
+      response
+        .status(500)
+        .json({
+            errorMessage: 'Error updating action'
+        })
+    })
 });
-router.delete('/:id', (request, respone) => {
+router.delete('/:id', (request, response) => {
   const actionID = request.params.id;
 
   actions
     .remove(actionID)
-    .then()
-    .catch()
+    .then(deletedCount => {
+      response
+        .status(200)
+        .json({
+          deleted: deletedCount
+        })
+    })
+    .catch(error => {
+      response
+        .status(500)
+        .json({
+            errorMessage: 'Error deleting action'
+        })
+    })
 });
+
+module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 
-const projects = require('./projectModel.js');
+const projects = require('./projects-model.js');
+const actions = require('../actions/actions-model.js');
 
 const router = express.Router();
 
@@ -101,8 +102,8 @@ router.delete('/:id', (request, response) => {
     })
 });
 
-router.get('/:id/actions', (request, response) => {
-  const projectID = request.params.id;
+router.get('/:projectID/actions', (request, response) => {
+  const projectID = request.params.projectID;
 
   projects
     .getProjectActions(projectID)
@@ -116,6 +117,28 @@ router.get('/:id/actions', (request, response) => {
         .status(500)
         .json({
           errorMessage: 'Error retrieving actions for this project'
+        })
+    })
+})
+
+router.post('/:projectID/actions', (request,response) => {
+  const newAction = {
+    ...request.body,
+    project_id: request.params.projectID
+  };
+
+  actions
+    .insert(newAction)
+    .then(action => {
+      response
+        .status(201)
+        .json(action)
+    })
+    .catch(error => {
+      response
+        .status(500)
+        .json({
+          errorMessage: 'Error creating action for this project'
         })
     })
 })
